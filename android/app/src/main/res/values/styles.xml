@@ -2,8 +2,16 @@
 <resources>
     <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is off -->
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <!-- Show a splash screen on the activity. Automatically removed when
-             the Flutter engine draws its first frame -->
+        <!--
+          Show a splash screen on the activity. Automatically removed when
+          the Flutter engine draws its first frame.
+
+          Since Android 12 the platform draws its own splash with the launch icon
+          and shows this background behind it, so on those versions the window is
+          the ramp above with the system's centred mark on it; on 11 and below,
+          `launch_background` paints both. Either way the first frame is the app's
+          own colour rather than the template's white.
+        -->
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>
     <!-- Theme applied to the Android Window as soon as the process has started.
@@ -13,6 +21,13 @@
 
          This Theme is only used starting with V2 of Flutter's Android embedding. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">?android:colorBackground</item>
+        <!--
+          `?android:colorBackground` used to sit here, which is white in light mode
+          and black in dark — neither of them this app's paper. The frame between
+          the splash and the first Flutter frame was therefore a colour the app
+          never uses anywhere else, and in dark mode it was a white flash. This is
+          the app's own background token: the same one every screen is painted on.
+        -->
+        <item name="android:windowBackground">@color/app_background</item>
     </style>
 </resources>

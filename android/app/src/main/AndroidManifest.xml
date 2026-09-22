@@ -52,13 +52,18 @@
               />
         </activity>
 
-        <!-- The normal entry, shown by default. -->
+        <!-- The normal entry, shown by default.
+
+             `roundIcon` is asked for explicitly rather than left to the launcher's
+             crop of `icon`: this app's mark is a ring, and a ring cut by a circle
+             mask is a different drawing from a ring drawn for one. -->
         <activity-alias
             android:name="com.onekit.cystera.LauncherDefault"
             android:targetActivity=".MainActivity"
             android:exported="true"
             android:enabled="true"
             android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

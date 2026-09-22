@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The round variant, for the launchers (and the `android:roundIcon` declaration in
+  the manifest) that ask for one. The mark is already inside the safe area, so this
+  is the same two layers: the difference between the square and round entries is
+  which shape the launcher crops to, and nothing in here needs to know that.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_monochrome" />
+</adaptive-icon>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The mark alone, white, for the Android 12+ launch screen.
+
+  Alone rather than on a tile: the platform paints `windowSplashScreenBackground`
+  behind this, so a tile here would be a rounded square of gradient floating on a
+  rectangle of gradient — which is exactly what the first version of this looked
+  like. Same geometry as `ic_launcher_foreground.xml`, and for the same reason: the
+  opening has to stay open.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="11"
+        android:strokeLineCap="round"
+        android:pathData="M75.67,57.82 A22,22 0 1 1 50.18,32.33" />
+
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M63.06,38.44 a6.5,6.5 0 1,0 13,0 a6.5,6.5 0 1,0 -13,0 z" />
+</vector>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The launch window's background, on every Android version this app installs on:
+  the app's ramp, drawn on the same diagonal the in-app splash and the Today header
+  wash use.
+
+  This is the first frame of the app, drawn by the platform before Flutter exists.
+  It used to be the Flutter template's plain white, which meant a launch began with
+  a white flash, then a dark app, then a gradient header — three unrelated things in
+  half a second. Now the window, the in-app splash and the header are one ramp, and
+  launching looks like the app arriving rather than like a sequence of screens.
+
+  Dark mode uses the same crimson: the app's dark theme takes its gradient from the
+  same two tokens, so there is nothing to swap here.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path android:pathData="M0,0 h108 v108 h-108 z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="108"
+                android:endY="108">
+                <item android:offset="0" android:color="#FFC81E48" />
+                <item android:offset="1" android:color="#FFFF7A94" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>
