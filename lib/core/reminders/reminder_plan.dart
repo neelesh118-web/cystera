@@ -209,7 +209,7 @@ ReminderPlan planReminders({
 ///
 /// It reuses the prediction's own title rather than inventing a second vocabulary
 /// for the same fact: a user who read "Your cycles vary too much for a useful
-/// prediction" on the Cycle tab reads that same sentence here.
+/// prediction" in the Cycle view reads that same sentence here.
 String _noWindowReason(CycleForecast forecast) => switch (forecast) {
       ForecastUnavailable() =>
         '${forecast.title} — nothing is scheduled, rather than a reminder with '

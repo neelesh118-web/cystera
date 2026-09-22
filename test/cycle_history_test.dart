@@ -50,7 +50,8 @@ void main() {
   Future<void> record(List<int> lengths, {int daysAgo = 20}) =>
       repository.markCycleDays(starts(lengths, daysAgo: daysAgo));
 
-  /// Pumps the app and opens the Cycle tab.
+  /// Pumps the app and opens the Cycle view — the Patterns destination's first
+  /// segment.
   Future<void> pumpCycle(WidgetTester tester, {bool phoneSized = false}) async {
     tester.platformDispatcher.accessibilityFeaturesTestValue =
         FakeAccessibilityFeatures(disableAnimations: true);

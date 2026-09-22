@@ -220,9 +220,15 @@ class AppText {
   String get yourCycleFootnote => pick('yourCycleFootnote');
   String get cycleModeTitle => pick('cycleModeTitle');
 
-  /// `Regular · None. Set on the Cycle tab, where the prediction changes as you
+  /// `Regular · None. Set on the Patterns tab, where the prediction changes as you
   /// choose.` Both halves are already translated by `CycleMode.title`'s own keys'
   /// worth of work elsewhere — what is a template here is the sentence around them.
+  ///
+  /// The row it labels is a pointer (`onTap: context.go('/cycle')`), so the
+  /// destination it names has to be the destination the user sees in the bar. It
+  /// said "the Cycle tab" until the cycle and the trends merged, and the nine
+  /// languages that carry this string were updated with the rename rather than
+  /// left pointing at a tab that no longer exists — see `docs/languages.md`.
   String cycleModeDetail(String mode, String contraception) => _fill(
         pick('cycleModeDetail'),
         {'mode': mode, 'contraception': contraception},

@@ -89,7 +89,8 @@ void main() {
 
   tearDown(() => lock.dispose());
 
-  /// Opens the app on the Trends tab, which is where the window gets read.
+  /// Opens the app on the Trends view — the Patterns destination's second segment —
+  /// which is where the window gets read.
   Future<void> pumpTrends(
     WidgetTester tester, {
     required LogRepository repository,

@@ -336,9 +336,17 @@ for that language — no other change.
 
 In three slices:
 
-1. **Navigation and the most-used verbs** — the five tabs, Save, Cancel, Undo, Taken,
+1. **Navigation and the most-used verbs** — the four tabs, Save, Cancel, Undo, Taken,
    Skipped, "not recorded", "Add one", the language picker itself, and the
-   machine-translation notice.
+   machine-translation notice. The four were five until the cycle and the trends
+   were merged into one destination, which added a single key — `navPatterns`.
+   Nine languages carry it: English, the four the catalogue keeps complete (bn,
+   pt, ru, ja), and the four that had a sentence naming the old "Cycle tab" and so
+   needed the new label to keep their own row honest (zh-Hans, hi, es, ar).
+   Everywhere else the label falls back to English, which is the one navigation
+   word a user may read untranslated, and it is written down here so that is a
+   known gap rather than a surprise: the alternative was inventing the word in
+   fifty-six more languages to keep a percentage up.
 2. **The words the log screen shows most** — the fourteen guideline symptom labels,
    the three domain headings, and the medication card's title and buttons. These are
    looked up rather than swapped in, because a symptom label is *data*

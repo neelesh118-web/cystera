@@ -435,6 +435,76 @@ void main() {
     });
   });
 
+  group('a row that points at a destination', () {
+    // `cycleModeDetail` is the one string in the catalogue that says where a setting
+    // lives: "Regular · None. Set on the Patterns tab, where the prediction changes
+    // as you choose."
+    //
+    // It spent a while pointing at a tab that no longer existed. The cycle and the
+    // trends are one destination now, so "the Cycle tab" sends a reader to a place
+    // the bar does not show and cannot be navigated to — and the row is a *pointer*
+    // (`onTap: () => context.go('/cycle')`), so the one thing it has to get right is
+    // the name of the place it points at.
+    //
+    // The rule that broke is checkable per language, and that is why it gets a test
+    // rather than a note: each language's own `navPatterns` is the word its bar
+    // shows, so a pointer can be held against it. A language that has the sentence
+    // but not the label has to name it in the fallback's own English word, because
+    // that is genuinely what its bar shows.
+    List<String> pointerProblemsIn(
+      Map<String, ({String sentence, String label})> rows,
+    ) {
+      final problems = <String>[];
+      for (final entry in rows.entries) {
+        if (!entry.value.sentence.contains(entry.value.label)) {
+          problems.add('${entry.key} points at "${entry.value.label}" but does not '
+              'name it: "${entry.value.sentence}"');
+        }
+      }
+      return problems;
+    }
+
+    test('a sentence naming the tab the bar no longer shows is caught', () {
+      final problems = pointerProblemsIn({
+        'en': (
+          sentence: 'Set on the Cycle tab, where the prediction changes.',
+          label: 'Patterns',
+        ),
+      });
+      expect(problems, hasLength(1));
+      expect(problems.single, contains('Cycle tab'));
+    });
+
+    test('a sentence naming it the way the bar does is accepted', () {
+      expect(
+        pointerProblemsIn({
+          'en': (sentence: 'Set on the Patterns tab.', label: 'Patterns'),
+        }),
+        isEmpty,
+      );
+    });
+
+    test('the real catalogue points at the tab the bar shows', () {
+      final rows = <String, ({String sentence, String label})>{};
+      for (final entry in kTranslations.entries) {
+        final sentence = entry.value['cycleModeDetail'];
+        if (sentence == null) continue;
+        rows[entry.key] = (
+          sentence: sentence,
+          label: AppText.forCode(entry.key).navPatterns,
+        );
+      }
+      expect(pointerProblemsIn(rows), isEmpty);
+      // Guards the test itself: this check only means something where the sentence
+      // exists, so the failure mode to watch for is one that iterates an empty map and
+      // passes. The nine are English, the four the catalogue keeps complete, and the
+      // four the rename updated so their own row would not be a lie.
+      expect(rows.length, greaterThanOrEqualTo(9),
+          reason: 'only ${rows.length} language(s) carry cycleModeDetail, so this '
+              'is asserting almost nothing');
+    });
+  });
+
   group('looking a string up', () {
     test('a translated language gives its own words', () {
       expect(AppText.forCode('hi').navToday, 'आज');

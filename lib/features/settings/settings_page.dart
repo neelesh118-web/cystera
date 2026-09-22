@@ -327,7 +327,7 @@ class _CycleSection extends StatelessWidget {
           title: Text(text.cycleModeTitle, style: Theme.of(context).textTheme.titleMedium),
           subtitle: Text(
             // The two titles come from the record, not from the copy: they are the
-            // words the Cycle tab's own picker stores, so a Settings row that
+            // words the Cycle view's own picker stores, so a Settings row that
             // invented its own would be a second name for the same value.
             text.cycleModeDetail(settings.mode.title, settings.contraception.title),
             style: TextStyle(color: t.textSecondary, fontSize: 13, height: 1.45),

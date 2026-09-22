@@ -224,7 +224,7 @@ class _Note extends StatelessWidget {
 /// Where the user is in their cycle, and the one line of prediction — or the one
 /// line of refusal, in the same size type and the same tone.
 ///
-/// The prediction lives on the Cycle tab with its basis; this is the summary, and
+/// The prediction lives in the Cycle view with its basis; this is the summary, and
 /// it says which tab the working is on. A refusal is not dressed up differently:
 /// for a lot of people "not enough cycles yet" is the correct answer, and it would
 /// be dishonest to print it as a warning under a window that other people get.

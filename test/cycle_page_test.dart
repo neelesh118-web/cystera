@@ -406,7 +406,7 @@ void main() {
       // The row says what the setting currently is and where the choice lives,
       // rather than pretending the choice is on this screen.
       expect(find.textContaining('Regular · Nothing'), findsOneWidget);
-      expect(find.textContaining('Set on the Cycle tab'), findsOneWidget);
+      expect(find.textContaining('Set on the Patterns tab'), findsOneWidget);
 
       await tester.tap(find.text('Cycle mode'));
       await tester.pump();
