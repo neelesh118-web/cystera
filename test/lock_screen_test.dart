@@ -159,6 +159,34 @@ void main() {
       expect(find.textContaining('cannot reset a forgotten PIN'), findsOneWidget);
     });
 
+    testWidgets('a person holding a backup file is told where restoring lives',
+        (tester) async {
+      // This test exists because the app used to be wrong here, in the direction
+      // that costs a user something. The setup screen said restoring "arrives with
+      // the backup screen in this same milestone" — written before that screen
+      // shipped and never revisited — so the one person who reads it, someone who
+      // has just installed Cystera holding yesterday's file, was told the app could
+      // not do the thing it can do.
+      //
+      // Both halves are pinned: the send-away is present, and the retracted claim is
+      // gone rather than merely softened. A test on the wording that replaced it
+      // would drift with the wording; a test on the claim that must not come back
+      // cannot.
+      final lock = await TestAppLock.create(initialise: false);
+      addTearDown(lock.dispose);
+      await lock.controller.initialise();
+      await pumpApp(tester, lock);
+
+      await tapText(tester, 'I already have a backup file');
+
+      // The Settings row's own words, reused rather than rewritten, so a user who
+      // follows this lands on a row they recognise — in their own language.
+      expect(find.textContaining('Restore from a backup file'), findsOneWidget);
+      expect(find.textContaining('Backup section in Settings'), findsOneWidget);
+      expect(find.textContaining('same milestone'), findsNothing,
+          reason: 'restoring has shipped, and the app must not say otherwise');
+    });
+
     testWidgets('choosing a PIN creates a locked record', (tester) async {
       final lock = await TestAppLock.create(initialise: false);
       addTearDown(lock.dispose);

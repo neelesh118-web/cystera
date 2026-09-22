@@ -2,6 +2,8 @@ import 'package:cystera/app.dart';
 import 'package:cystera/core/theme/app_theme.dart';
 import 'package:cystera/core/theme/motion.dart';
 import 'package:cystera/core/widgets/cycle_wash.dart';
+import 'package:cystera/core/widgets/patterns_switcher.dart';
+import 'package:cystera/features/trends/trends_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -63,12 +65,66 @@ void main() {
     await pumpApp(tester, lock);
 
     await tapTab(tester, 'Log', 'Period day');
-    await tapTab(tester, 'Cycle', 'No cycles recorded yet');
-    // With no open record there is nothing to compare, and the screen says that
-    // rather than drawing an empty chart.
-    await tapTab(tester, 'Trends', 'nothing to compare');
+    await tapTab(tester, 'Patterns', 'No cycles recorded yet');
     await tapTab(tester, 'Settings', 'Theme, lock, backup');
     await tapTab(tester, 'Today', 'Nothing recorded yet');
+  });
+
+  testWidgets('the bar carries four destinations, and Patterns holds two views',
+      (tester) async {
+    await pumpApp(tester, lock);
+
+    final bar = find.byType(NavigationBar);
+    expect(
+      find.descendant(of: bar, matching: find.byType(NavigationDestination)),
+      findsNWidgets(4),
+      reason: 'the cycle and the trends are one destination between them now',
+    );
+
+    await tapTab(tester, 'Patterns', 'No cycles recorded yet');
+
+    // Neither of the merged screens is a destination any more. Asserted against the
+    // bar rather than the whole tree, because both words are still *on screen*: the
+    // switcher names them, which is the point of it.
+    expect(find.descendant(of: bar, matching: find.text('Cycle')), findsNothing);
+    expect(find.descendant(of: bar, matching: find.text('Trends')), findsNothing);
+
+    // The switcher is in the hero, and its second segment is the trends.
+    final switcher = find.byType(PatternsSwitcher);
+    expect(switcher, findsOneWidget);
+    await tester.tap(find.descendant(of: switcher, matching: find.text('Trends')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.byType(TrendsPage), findsOneWidget,
+        reason: 'the second segment opens the trends view');
+    // Still Patterns: the destination did not move, only the view inside it.
+    expect(tester.widget<NavigationBar>(bar).selectedIndex, 2);
+    expect(find.descendant(of: bar, matching: find.text('Patterns')), findsOneWidget);
+  });
+
+  testWidgets('every tab lays out at the largest text scale the app allows',
+      (tester) async {
+    // The app clamps the system text scale to 1.3 (`app.dart`), and all four
+    // screens just gained a header: an overline, a title, a subtitle and — on
+    // Patterns — a two-segment switcher sitting inside the gradient. A hero is the
+    // easiest place in an app to overflow, and an overflow is only ever found by
+    // looking at it: it draws stripes rather than throwing, so this test asserts on
+    // the exception the framework recorded rather than on a pixel.
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    await pumpApp(tester, lock);
+
+    for (final label in ['Log', 'Patterns', 'Settings', 'Today']) {
+      await tester.tap(
+        find.descendant(of: find.byType(NavigationBar), matching: find.text(label)),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(tester.takeException(), isNull,
+          reason: 'the $label tab overflows at a 1.3 text scale');
+    }
   });
 
   testWidgets('the primary action opens the logging screen', (tester) async {

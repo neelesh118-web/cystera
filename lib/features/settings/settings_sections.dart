@@ -5,6 +5,57 @@ import '../../core/i18n/app_text.dart';
 import '../../core/theme/app_theme.dart';
 import '../lock/pin_widgets.dart';
 
+/// A heading over a run of sections.
+///
+/// The settings page is fourteen cards, and fourteen equal cards is not a page a
+/// person can scan — it is a page they scroll until something looks familiar. These
+/// headings name the runs without moving anything, so a user who wants the theme
+/// knows it is in the first block and a user who wants their backup knows it is
+/// under the fifth, and neither has to read the other four to find out.
+///
+/// The mark beside the words is the app's accent bar rather than an icon: an icon
+/// per group would be six more drawings to keep in step with nothing, and a
+/// two-pixel rule does the same job of saying "a new subject starts here".
+class SettingsGroupHeading extends StatelessWidget {
+  const SettingsGroupHeading(this.title, {super.key});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = context.tokens;
+    return Padding(
+      // Extra room above, and none below: the heading belongs to what follows it,
+      // and `PageScaffold` already spaces it from the section underneath.
+      padding: const EdgeInsets.only(top: 18, left: 4, right: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 17,
+            decoration: BoxDecoration(
+              color: t.accent,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: t.textPrimary,
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.3,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// A titled card of rows. Material rather than a decorated box because ListTile
 /// paints its ripples on the nearest Material ancestor.
 class SettingsSection extends StatelessWidget {

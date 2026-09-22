@@ -11,6 +11,7 @@ import 'package:cystera/core/labs/lab_repository.dart';
 import 'package:cystera/core/log/log_repository.dart';
 import 'package:cystera/features/labs/lab_import_sheet.dart';
 import 'package:cystera/features/labs/lab_section.dart';
+import 'package:cystera/core/widgets/patterns_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -71,9 +72,20 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
+    // Two taps now, because the trends are a view inside Patterns rather than a
+    // destination of their own: the bar, then the switcher in the hero.
     await tester.tap(
       find.descendant(
         of: find.byType(NavigationBar),
+        matching: find.text('Patterns'),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(PatternsSwitcher),
         matching: find.text('Trends'),
       ),
     );

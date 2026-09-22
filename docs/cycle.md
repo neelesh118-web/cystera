@@ -124,7 +124,8 @@ unless it is explained.
 
 ## The six rows of past cycles, and what they are for
 
-Under the prediction card the Cycle screen draws the last six finished cycles,
+Under the prediction card the Cycle view — the first of the two views inside the
+Patterns destination, beside the trends — draws the last six finished cycles,
 each one held against the window the app gave *during* that cycle. It is the
 answer to the question every tracker hopes nobody asks — was the prediction any
 good — and it is drawn as rows rather than as a line, a score or a percentage,

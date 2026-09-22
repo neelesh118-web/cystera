@@ -122,7 +122,7 @@ Twenty-four months by default, turned into days with a fixed 31-day month rather
 than a calendar walk. It only ever widens the window by a day or two, and a report
 that included one extra blank day is not a correctness problem.
 
-Two years rather than the six months the Trends screen reads, and the difference is
+Two years rather than the six months the Trends view reads, and the difference is
 who is looking: a chart is read at a glance and a denominator is read by a
 clinician, who asks about years. `ReportInput.today` is the only clock, injected,
 so the window is testable rather than dependent on when the test runs.

@@ -13,6 +13,7 @@ import 'package:cystera/core/log/severity.dart';
 import 'package:cystera/core/log/symptom_catalogue.dart';
 import 'package:cystera/core/log/symptom_correlation.dart';
 import 'package:cystera/core/metrics/metric_models.dart';
+import 'package:cystera/core/widgets/patterns_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -113,9 +114,21 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
+    // Patterns, then its second view. The trends are not a destination of their own
+    // any more, so this is the two taps a user makes — and the extra pump between
+    // them is the route swap, not a wait for the read.
     await tester.tap(
       find.descendant(
         of: find.byType(NavigationBar),
+        matching: find.text('Patterns'),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(PatternsSwitcher),
         matching: find.text('Trends'),
       ),
     );

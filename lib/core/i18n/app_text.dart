@@ -133,6 +133,19 @@ class AppText {
   String get navTrends => pick('navTrends');
   String get navSettings => pick('navSettings');
 
+  /// The one destination that holds both the cycle and the trends.
+  ///
+  /// Those two screens are two views of the same thing — the record read over time
+  /// — and the bar was spending two of its five places on them. `navCycle` and
+  /// `navTrends` are still read: they are the switcher's two segments now, which is
+  /// why they stay declared rather than being retired with their tab.
+  ///
+  /// Named for what the screen shows (patterns in the record) rather than for what
+  /// a user might hope to get out of it. This app refuses to turn a month of
+  /// logging into advice, and "Insights" would promise exactly that above a card
+  /// whose whole job is to say why it has none.
+  String get navPatterns => pick('navPatterns');
+
   String get save => pick('save');
   String get cancel => pick('cancel');
   String get undo => pick('undo');

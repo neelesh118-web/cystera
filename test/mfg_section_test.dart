@@ -15,6 +15,7 @@ import 'package:cystera/core/log/day_key.dart';
 import 'package:cystera/core/log/log_controller.dart';
 import 'package:cystera/core/log/log_repository.dart';
 import 'package:cystera/features/trends/trends_page.dart';
+import 'package:cystera/core/widgets/patterns_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -62,9 +63,20 @@ void main() {
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
+    // Patterns, then its second view: the trends are not a destination of their
+    // own any more, and this is the two taps a user makes to reach them.
     await tester.tap(
       find.descendant(
         of: find.byType(NavigationBar),
+        matching: find.text('Patterns'),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(PatternsSwitcher),
         matching: find.text('Trends'),
       ),
     );

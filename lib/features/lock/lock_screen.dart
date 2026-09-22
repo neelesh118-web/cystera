@@ -7,6 +7,7 @@ import '../../core/crypto/pin.dart';
 import '../../core/lock/lock_controller.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/motion.dart';
+import '../../core/widgets/app_mark.dart';
 import 'pin_widgets.dart';
 
 /// The screen between someone holding the phone and the record.
@@ -129,8 +130,8 @@ class _LockScreenState extends State<LockScreen> {
           children: [
             Center(
               child: Container(
-                width: 54,
-                height: 54,
+                width: 58,
+                height: 58,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [t.gradientStart, t.gradientEnd],
@@ -139,6 +140,15 @@ class _LockScreenState extends State<LockScreen> {
                   ),
                   borderRadius: BorderRadius.circular(18),
                 ),
+                // The mark, at the size the launcher draws it inside its own mask:
+                // `AppMark` fills 51% of this box, which is what the adaptive icon's
+                // foreground does on a 108 canvas. So this is the artwork of the
+                // icon the user just tapped, on the screen that icon opened.
+                //
+                // It was a blank gradient tile. On the one screen nobody can avoid
+                // — every launch, every return from the background — a plain square
+                // of the app's colours is exactly what a placeholder looks like.
+                child: const AppMark(size: 58),
               ),
             ),
             const SizedBox(height: 22),

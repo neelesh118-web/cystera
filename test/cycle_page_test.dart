@@ -87,8 +87,10 @@ void main() {
 
   Future<void> pumpApp(WidgetTester tester) => pumpCystera(tester);
 
+  // The cycle is the first view inside the Patterns destination, so opening it is
+  // one tap on the bar — the same one tap it always was, under a different name.
   Future<void> pumpCycleTab(WidgetTester tester, {bool phoneSized = false}) =>
-      pumpCystera(tester, tab: 'Cycle', phoneSized: phoneSized);
+      pumpCystera(tester, tab: 'Patterns', phoneSized: phoneSized);
 
   /// A page's own vertical list. Found by direction rather than by type: the day
   /// strip is a horizontal ListView on the Today screen, and a finder that matches
@@ -372,7 +374,7 @@ void main() {
       // The title from the card, lowercased into a sentence, and a link to the
       // reasoning — the same weight as a window gets.
       expect(find.text('No prediction: not enough cycles yet'), findsOneWidget);
-      expect(find.text('See why, on the Cycle tab'), findsOneWidget);
+      expect(find.text('See why, on the Patterns tab'), findsOneWidget);
     });
 
     testWidgets('an empty record gets the first refusal, not a blank line',
@@ -380,10 +382,10 @@ void main() {
       await pumpApp(tester);
 
       expect(find.text('No prediction: no periods recorded yet'), findsOneWidget);
-      expect(find.text('See why, on the Cycle tab'), findsOneWidget);
+      expect(find.text('See why, on the Patterns tab'), findsOneWidget);
     });
 
-    testWidgets('the link lands on the Cycle tab', (tester) async {
+    testWidgets('the link lands on the cycle view of Patterns', (tester) async {
       await recordCycles([28, 30, 27, 31]);
       await pumpApp(tester);
 

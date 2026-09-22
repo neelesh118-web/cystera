@@ -7,6 +7,7 @@ import '../../core/i18n/app_text.dart';
 import '../../core/lock/lock_controller.dart';
 import '../../core/log/log_controller.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/page_hero.dart';
 import '../../core/widgets/page_scaffold.dart';
 import 'backup_section.dart';
 import 'annual_review_section.dart';
@@ -46,9 +47,20 @@ class SettingsPage extends StatelessWidget {
     ];
 
     return PageScaffold(
-      title: text.navSettings,
-      subtitle: unlocked ? text.settingsSubtitleOpen : text.settingsSubtitleLocked,
+      header: PageHero(
+        title: HeroTitle(text.navSettings),
+        subtitle: unlocked ? text.settingsSubtitleOpen : text.settingsSubtitleLocked,
+      ),
       children: [
+        // Fourteen sections, six headings.
+        //
+        // The page worked and read as an undifferentiated column of cards: after
+        // the theme radios a user had no way to know whether they were two rows or
+        // twelve from the thing they came for, and everything looked equally
+        // important because everything looked the same. The headings do not move a
+        // single section — a settings page whose rows jump around between versions
+        // is its own kind of unhelpful — they just say where one subject ends.
+        const SettingsGroupHeading('Look and language'),
         SettingsSection(
           label: text.appearanceHeading,
           children: [
@@ -77,6 +89,7 @@ class SettingsPage extends StatelessWidget {
         // setting that has to be reachable while the record is closed, because the
         // lock screen itself has to be readable.
         const LanguageSection(),
+        const SettingsGroupHeading('Privacy and lock'),
         _LockSection(unlocked: unlocked),
         SettingsSection(
           label: text.privacyHeading,
@@ -100,12 +113,16 @@ class SettingsPage extends StatelessWidget {
             ),
           ],
         ),
+        const SettingsGroupHeading('Your record'),
         const _CycleSection(),
+        const SettingsGroupHeading('Reminders and reports'),
         const RemindersSection(),
         const ReportSection(),
         const AnnualReviewSection(),
+        const SettingsGroupHeading('Getting data in and out'),
         const TrackerImportSection(),
         const BackupSection(),
+        const SettingsGroupHeading('What is on this phone'),
         const StoragePanel(),
         const PrivacyReceiptSection(),
         // There is no "Queued" section any more, and that is the point of this

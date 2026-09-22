@@ -10,8 +10,8 @@ import '../../core/log/log_models.dart';
 import '../../core/log/severity.dart';
 import '../../core/log/symptom_catalogue.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/cycle_wash.dart';
 import '../../core/widgets/date_label.dart';
+import '../../core/widgets/page_hero.dart';
 import '../../core/widgets/page_scaffold.dart';
 import '../log/undo_toast.dart';
 
@@ -32,54 +32,15 @@ class TodayPage extends StatelessWidget {
     final today = log.todayLog;
 
     return PageScaffold(
-      header: CycleWash(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          // The header grows with its content, so the headline is never clipped on
-          // a narrow phone or at a large text scale. The gap below stands in for
-          // the spread-out look the fixed height used to provide.
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'CYSTERA',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.82),
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2.2,
-              ),
-            ),
-            const SizedBox(height: 26),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  // The controller's today, not the machine's: the screen and the
-                  // record must agree about what day it is, including in a test.
-                  DateFormat('EEEE, d MMMM').format(log.today),
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _headline(context, log, today),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+      // The app's name is the mark beside this line rather than a word above it: a
+      // header that says "Cystera" on every screen is a line read once and never
+      // again, and the date is the part that changes. The headline below is the
+      // app's one honest sentence about the day.
+      header: PageHero(
+        overline: DateFormat('EEEE, d MMMM').format(log.today),
+        title: HeroTitle(_headline(context, log, today)),
+        subtitle: _subtitle(log, today),
       ),
-      title: 'Today',
-      subtitle: _subtitle(log, today),
       children: [
         if (log.error case final error?) _Problem(text: error),
         Row(
@@ -111,12 +72,7 @@ class TodayPage extends StatelessWidget {
           // it links to have to agree about what day it is, including in a test.
           today: log.today,
         ),
-        const _PrivacyFooter(
-          title: 'No internet permission',
-          body: 'This build ships without android.permission.INTERNET. That is not a setting or a '
-              'promise — a release APK without it cannot open a connection, so there is nothing to '
-              'mistrust. A CI check fails the build if one is ever added.',
-        ),
+        _TrustNote(onTap: () => context.go('/settings')),
       ],
     );
   }
@@ -346,7 +302,7 @@ class _CycleCard extends StatelessWidget {
               child: Text(
                 forecast.hasWindow
                     ? 'See the cycles it is based on'
-                    : 'See why, on the Cycle tab',
+                    : 'See why, on the ${AppTextScope.of(context).navPatterns} tab',
               ),
             ),
           ],
@@ -412,38 +368,54 @@ class _Problem extends StatelessWidget {
   }
 }
 
-class _PrivacyFooter extends StatelessWidget {
-  const _PrivacyFooter({required this.title, required this.body});
+/// The app's central promise, at the size somebody scrolls past.
+///
+/// It was four lines of prose at the bottom of this screen. Nobody reads four lines
+/// of prose on the screen they open twice a day, and a paragraph a user has learned
+/// to skip is worse than no paragraph: it makes the claim look like boilerplate.
+///
+/// So this is the claim as one line with a way to check it. The full version — with
+/// the internet permission read out of this phone rather than asserted, and the
+/// keystore's own answer beside it — is on Settings, one tap away, which is where
+/// someone who actually wants to verify it goes.
+class _TrustNote extends StatelessWidget {
+  const _TrustNote({required this.onTap});
 
-  final String title;
-  final String body;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final t = context.tokens;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: t.surfaceRaised,
-        borderRadius: BorderRadius.circular(AppTheme.radius),
-        border: Border.all(color: t.border),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(Icons.shield_outlined, size: 18, color: t.accentSoft),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 6),
-                Text(body, style: TextStyle(color: t.textSecondary, fontSize: 13, height: 1.5)),
-              ],
-            ),
+    return Material(
+      color: t.surfaceRaised,
+      borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppTheme.radiusSmall),
+            border: Border.all(color: t.border),
           ),
-        ],
+          child: Row(
+            children: [
+              Icon(Icons.shield_outlined, size: 17, color: t.accentSoft),
+              const SizedBox(width: 11),
+              Expanded(
+                child: Text(
+                  'No internet permission',
+                  style: TextStyle(
+                    color: t.textSecondary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, size: 18, color: t.textFaint),
+            ],
+          ),
+        ),
       ),
     );
   }

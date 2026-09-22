@@ -4,11 +4,14 @@ import 'package:provider/provider.dart';
 import '../../core/cycle/cycle_backtest.dart';
 import '../../core/cycle/cycle_summary.dart';
 import '../../core/cycle/window_provenance.dart';
+import '../../core/i18n/app_text.dart';
 import '../../core/log/log_controller.dart';
 import '../../core/log/log_models.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/date_label.dart';
+import '../../core/widgets/page_hero.dart';
 import '../../core/widgets/page_scaffold.dart';
+import '../../core/widgets/patterns_switcher.dart';
 import '../log/backfill_sheet.dart';
 import 'cycle_history_card.dart';
 import 'cycle_settings_section.dart';
@@ -33,13 +36,22 @@ class CyclePage extends StatelessWidget {
     final runs = log.series.runs;
     final forecast = log.forecast;
 
+    final text = AppTextScope.of(context);
+
     return PageScaffold(
-      title: 'Cycle',
-      subtitle: runs.isEmpty
-          ? 'No cycles recorded yet, so there is nothing to predict from.'
-          : '${runs.length} ${runs.length == 1 ? 'period' : 'periods'} recorded. '
-              'Everything below is either what you logged or the arithmetic you '
-              'can check.',
+      // The destination is Patterns; this view of it is the cycle. The switcher
+      // under the subtitle is what says so, and what makes the trends one tap away
+      // instead of a tab away — see `PatternsSwitcher` for why these two merged.
+      header: PageHero(
+        overline: text.navPatterns,
+        title: HeroTitle(text.navCycle),
+        subtitle: runs.isEmpty
+            ? 'No cycles recorded yet, so there is nothing to predict from.'
+            : '${runs.length} ${runs.length == 1 ? 'period' : 'periods'} recorded. '
+                'Everything below is either what you logged or the arithmetic you '
+                'can check.',
+        footer: const PatternsSwitcher(current: '/cycle'),
+      ),
       children: [
         if (log.loading)
           const _LoadingCard()

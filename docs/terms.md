@@ -79,7 +79,7 @@ else.
   when; it does not link to the announcement, because the app has no internet
   permission and a dead link in a health app is worse than none. This file is where the
   sources live.
-- **The rename landed after the app's own copy was written.** The Cycle screen's
+- **The rename landed after the app's own copy was written.** The Cycle view's
   irregular mode is still labelled "Irregular / PCOD", and three other strings in
   `lib/core/cycle/` mention PCOD. They are accurate as words people use, they are not
   wrong, and they are now inconsistent with a section that leads with PMOS. Reconciling

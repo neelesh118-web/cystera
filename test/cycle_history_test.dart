@@ -76,10 +76,11 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
+    // The cycle is the first view inside the Patterns destination.
     await tester.tap(
       find.descendant(
         of: find.byType(NavigationBar),
-        matching: find.text('Cycle'),
+        matching: find.text('Patterns'),
       ),
     );
     await tester.pump();

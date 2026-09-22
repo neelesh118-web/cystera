@@ -250,12 +250,22 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: t.background,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: t.isDark ? Rose.inkRaised : Rose.paperRaised,
+        // Tinted from the accent rather than from the raised surface it used to be:
+        // that colour is one step off the background, so the pill behind the
+        // selected icon was almost invisible and the bar read as four equal icons
+        // with one of them merely a different shade. Four destinations rather than
+        // five means each one is bigger and there is less excuse for the bar not
+        // saying plainly where you are.
+        indicatorColor: t.accent.withValues(alpha: t.isDark ? 0.22 : 0.13),
         elevation: 0,
         height: 68,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        labelTextStyle: WidgetStatePropertyAll(
-          TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: t.textSecondary),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (s) => TextStyle(
+            fontSize: 11.5,
+            fontWeight: s.contains(WidgetState.selected) ? FontWeight.w800 : FontWeight.w600,
+            color: s.contains(WidgetState.selected) ? t.accent : t.textSecondary,
+          ),
         ),
         iconTheme: WidgetStateProperty.resolveWith(
           (s) => IconThemeData(

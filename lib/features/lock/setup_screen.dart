@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/crypto/pin.dart';
+import '../../core/i18n/app_text.dart';
 import '../../core/lock/lock_controller.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/cycle_wash.dart';
+import '../../core/widgets/page_hero.dart';
 import 'pin_widgets.dart';
 
 /// What happens the first time the app is opened.
@@ -62,37 +63,17 @@ class _SetupScreenState extends State<SetupScreen> {
 
   List<Widget> _choiceStep(BuildContext context, AppTokens t) {
     return [
-      CycleWash(
-        // Tall enough for the two-line headline at the largest text scale the
-        // app allows. The header is a fixed-height design element, so this
-        // number is the thing that keeps it from clipping.
-        height: 184,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: const [
-            Text(
-              'CYSTERA',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2.2,
-              ),
-            ),
-            SizedBox(height: 6),
-            Text(
-              'A record that\ncannot be uploaded',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                height: 1.2,
-                letterSpacing: -0.4,
-              ),
-            ),
-          ],
-        ),
+      // The same hero every tab uses, on the first screen anyone sees: the mark,
+      // then the one sentence this app is built to be able to say. It used to be a
+      // hand-rolled wash with its own type sizes and its own height, which is how
+      // the first screen of the app ended up looking like a different app from the
+      // four behind it.
+      //
+      // The height is a *minimum* (`CycleWash` grows with its child), so the
+      // two-line headline cannot clip at the largest text scale the app allows.
+      const PageHero(
+        title: HeroTitle('A record that\ncannot be uploaded'),
+        height: 158,
       ),
       const SizedBox(height: 22),
       Text(
@@ -129,8 +110,17 @@ class _SetupScreenState extends State<SetupScreen> {
       ),
       if (_restoreMode)
         Text(
-          'Restoring arrives with the backup screen in this same milestone — '
-          'export your first backup from Settings once the record is open.',
+          // This used to say that restoring "arrives with the backup screen in this
+          // same milestone", which stopped being true when that screen shipped: the
+          // app can restore a backup, and it was telling the one person who needs it
+          // — someone who has just installed the app holding yesterday's file — that
+          // it could not. The row's own words are reused rather than rewritten, so
+          // this reads the same in all sixty-five languages as the Settings row it
+          // sends them to.
+          '${AppTextScope.of(context).restoreTitle} — '
+          '${AppTextScope.of(context).restoreDetail} It is on the Backup section in '
+          'Settings: open a record first — an empty one will do — and pick your file '
+          'there.',
           style: TextStyle(color: t.textFaint, fontSize: 13, height: 1.5),
         ),
       const SizedBox(height: 16),

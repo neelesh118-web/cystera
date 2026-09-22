@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/lock/lock_controller.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/app_mark.dart';
 import 'lock_screen.dart';
 import 'setup_screen.dart';
 
@@ -106,6 +107,17 @@ class _ModalNavigator extends StatelessWidget {
 
 /// Shown while the vault is being read — a second or two at most, but showing
 /// the lock screen during it would flash a PIN pad at someone who has no PIN.
+///
+/// It is deliberately the same drawing as the platform's own launch window: the
+/// ramp, and the mark, in the same places. Android paints that screen before
+/// Flutter exists (`values/styles.xml` and `values-v31/styles.xml`), so matching it
+/// is what makes the handover from the platform to this frame invisible. The
+/// version this replaced was a small rounded tile on the page background, so a
+/// launch went crimson splash → rose tile on paper → the app, which is three
+/// screens in half a second and reads as a flicker rather than as an arrival.
+///
+/// The mark is [AppMark], which is the same geometry as the launcher icon, so all
+/// three — the icon, the platform's splash and this — are one mark.
 class _Splash extends StatelessWidget {
   const _Splash();
 
@@ -113,33 +125,34 @@ class _Splash extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = context.tokens;
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [t.gradientStart, t.gradientEnd],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      // No `SafeArea`, and the gradient as the body rather than inside a centred
+      // box: the launch window covers the whole panel, status bar included, and a
+      // splash that started below the status bar would jump at the handover.
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [t.gradientStart, t.gradientEnd],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const AppMark(size: 88),
+              const SizedBox(height: 28),
+              Text(
+                'Cystera',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.95),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 4.2,
                 ),
-                borderRadius: BorderRadius.circular(15),
               ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'Cystera',
-              style: TextStyle(
-                color: t.textSecondary,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2.4,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

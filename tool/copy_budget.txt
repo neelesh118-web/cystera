@@ -137,4 +137,37 @@
 #
 # total raised 883 -> 914 (the mFG self-check), see the note above
 
+# The settings page gained six group headings ('Look and language', 'Privacy and
+# lock', 'Your record', 'Reminders and reports', 'Getting data in and out',
+# 'What is on this phone'), and the total did not move.
+#
+# The six headings exist because Settings was fourteen equal cards in a column:
+# nothing said
+# where one subject ended, so a user wanting the theme had no way to tell whether
+# the thing they came for was two rows down or twelve. The headings name the runs
+# and move nothing, which is what took the page from fourteen things to six.
+#
+# They are English on purpose rather than by oversight, and this is the honest
+# place to say so. The alternative was six new `AppText` keys, and the rule this
+# file states is that a key cannot be declared without the translations that make
+# it worth declaring — the four languages the catalogue keeps complete (bn, pt,
+# ru, ja, asserted in `i18n_test.dart`) would each have needed six headings written
+# by someone who does not speak them. Inventing them would have raised a coverage
+# percentage while making those four screens worse, so the six strings are counted
+# here instead and the slice that translates the rest of the settings page takes
+# them with it.
+#
+# It stays at 914 because six strings left in the same pass, and they are named so
+# the flat number is a fact rather than a coincidence: Today's privacy paragraph —
+# a heading and three lines of prose, now one line and a link to the section that
+# makes the same claim with the phone's own answers — and the setup screen's
+# "restoring arrives with the backup screen in this same milestone", which was
+# false, because restoring had shipped. That one is replaced with the Backup row's
+# own words, which are already translated into all sixty-five languages, so the
+# person holding a backup file on first run is told the truth in their language
+# rather than a milestone note in English.
+#
+# total held at 914 (the settings group headings, against six strings removed),
+# see the note above
+
 total = 914

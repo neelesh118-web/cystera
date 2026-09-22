@@ -8,6 +8,7 @@ import '../../core/log/log_models.dart';
 import '../../core/log/severity.dart';
 import '../../core/log/symptom_catalogue.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/page_hero.dart';
 import '../../core/widgets/page_scaffold.dart';
 import '../meds/med_section.dart';
 import '../metrics/metric_section.dart';
@@ -36,15 +37,30 @@ class LogPage extends StatelessWidget {
     final log = context.watch<LogController>();
 
     return PageScaffold(
-      title: 'Log',
-      subtitle: _subtitle(log),
-      actions: [
-        if (!log.isToday)
-          TextButton(
-            onPressed: () => log.showDay(log.today),
-            child: const Text('Back to today'),
-          ),
-      ],
+      // The day is the title, because the day is the one thing this screen can get
+      // wrong: everything below it is recorded *against* whichever day is named
+      // here, and a user who scrolls a past day's screen without noticing is the
+      // failure this header exists to prevent. The tab's name is the small line
+      // above it, and "Back to today" sits on the same row — visible only when it
+      // would do something.
+      header: PageHero(
+        overline: AppTextScope.of(context).navLog,
+        title: HeroTitle(_subtitle(log)),
+        trailing: log.isToday
+            ? null
+            : TextButton(
+                onPressed: () => log.showDay(log.today),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.white.withValues(alpha: 0.18),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  minimumSize: const Size(0, 34),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  textStyle: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700),
+                ),
+                child: const Text('Back to today'),
+              ),
+      ),
       children: [
         DayStrip(
           days: DayKey.recentDays(log.today, 14),

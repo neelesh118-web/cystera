@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/i18n/app_text.dart';
 import '../../core/labs/lab_controller.dart';
 import '../../core/log/log_controller.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/milestone_notice.dart';
+import '../../core/widgets/page_hero.dart';
 import '../../core/widgets/page_scaffold.dart';
+import '../../core/widgets/patterns_switcher.dart';
 import '../labs/lab_section.dart';
 import 'correlation_card.dart';
 import 'cycle_length_card.dart';
@@ -49,13 +52,23 @@ class _TrendsPageState extends State<TrendsPage> {
     final correlation = log.correlation;
     final reading = correlation == null && log.trendsError == null;
 
+    final text = AppTextScope.of(context);
+
     return PageScaffold(
-      title: 'Trends',
-      subtitle: correlation == null
-          ? (log.trendsError == null
-              ? 'Reading the last six months of your record.'
-              : 'Your record could not be read just now.')
-          : 'The last six months of your record, and what it refuses to say.',
+      // The other half of the Patterns destination. Same hero, same switcher, one
+      // different title: a user moving between the cycle and the trends should feel
+      // they are in one place looking at two things, because that is what happened
+      // when the two tabs merged.
+      header: PageHero(
+        overline: text.navPatterns,
+        title: HeroTitle(text.navTrends),
+        subtitle: correlation == null
+            ? (log.trendsError == null
+                ? 'Reading the last six months of your record.'
+                : 'Your record could not be read just now.')
+            : 'The last six months of your record, and what it refuses to say.',
+        footer: const PatternsSwitcher(current: '/trends'),
+      ),
       children: [
         if (log.trendsError case final error?)
           _ErrorCard(message: error)
