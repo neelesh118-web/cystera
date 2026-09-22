@@ -500,7 +500,7 @@ class LogController extends ChangeNotifier {
       final mfgChecks = await repository.mfgChecks();
       // The metric switches and the user's own symptoms travel with them, for the
       // same reason: they are part of what the Log screen draws.
-      final metricPrefs = await repository.metricPrefs();
+      final metricPrefs = await _readMetricPrefs(repository);
       final customSymptoms = await repository.customSymptoms();
       // Settings are read separately and tolerantly: a settings row that cannot
       // be read is a reason to fall back to the defaults, not a reason to blank
@@ -1816,6 +1816,22 @@ class LogController extends ChangeNotifier {
       // a due date that disappears on a flaky read is a due date the user cannot
       // trust to be there.
       return _annualReview;
+    }
+  }
+
+  /// The metric switches, read on the same terms as the other settings rows.
+  ///
+  /// Called out because it used to be the exception: this read sat inside the
+  /// record's own `try`, so a row this build cannot read escaped into the catch
+  /// that blanks the screen — the day's log, the symptoms and the medications
+  /// went with it, which is exactly what the comment above promises a settings
+  /// row can never cause. Read here, an unreadable row means no metrics are on,
+  /// the same state a new record is in.
+  Future<MetricPrefs> _readMetricPrefs(LogRepository repository) async {
+    try {
+      return await repository.metricPrefs();
+    } on Object {
+      return _metricPrefs;
     }
   }
 

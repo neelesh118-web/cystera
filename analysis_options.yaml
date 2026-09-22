@@ -10,6 +10,20 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+  # These are on because of a bug class this project actually shipped, twice.
+  #
+  # A `jsonDecode(...) as Map<String, dynamic>`, or a field read as `map['x'] as
+  # String`, throws a **TypeError** rather than an `Exception` when the stored row
+  # is valid JSON of the wrong shape. `strict-casts` makes the next such cast a
+  # compile error instead of a crash on the one phone whose row came from another
+  # version. `strict-inference` catches the same mistake one step earlier, where
+  # a type is inferred as `dynamic` and never questioned.
+  #
+  # `unawaited_futures` is here for the write paths: an unawaited save in this app
+  # is a record that says it saved and did not.
+  language:
+    strict-casts: true
+    strict-inference: true
   exclude:
     - build/**
     - android/**
@@ -31,6 +45,7 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
+    unawaited_futures: true
     # Fires on `_field = param` in a constructor even though Dart forbids private
     # *named* parameters, so the rewrite it asks for is not expressible. The
     # alternative is a public field, which is worse for key material.

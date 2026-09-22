@@ -192,4 +192,19 @@ void main() {
           reason: 'the drawn order follows the enum, not the toggle order');
     });
   });
+
+  group('a stored blob of the wrong shape', () {
+    test('reads as no metrics on, rather than as a failure', () {
+      // Valid JSON, wrong shape — every one of these throws a TypeError, which is
+      // an `Error` and not an `Exception`, so the `FormatException` guard cannot
+      // see it. This decode runs while the record is being read, so an escape
+      // here used to blank the entire log screen for one unreadable settings row.
+      expect(MetricPrefs.decode('[]').enabled, isEmpty);
+      expect(MetricPrefs.decode('"weight"').enabled, isEmpty);
+      expect(MetricPrefs.decode('{"enabled": "weight"}').enabled, isEmpty);
+      expect(MetricPrefs.decode('{"enabled": [1, 2]}').enabled, isEmpty);
+      expect(MetricPrefs.decode('not json at all').enabled, isEmpty);
+      expect(MetricPrefs.decode('').enabled, isEmpty);
+    });
+  });
 }

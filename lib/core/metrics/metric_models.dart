@@ -297,6 +297,18 @@ class MetricPrefs {
       // An unreadable prefs blob must not take the app down; no metrics on is a
       // safe default, and it is the same state a new record is in.
       return none;
+    } on TypeError {
+      // The other way a blob is unreadable, and the one the guard above cannot
+      // see: valid JSON of the wrong shape — an array where an object is
+      // expected, or a field of the wrong type — throws a `TypeError`, which is
+      // an `Error` and not an `Exception`.
+      //
+      // It matters more here than the same mistake would elsewhere, because this
+      // decode runs while the record is being read: a single unreadable settings
+      // row would take the day's log, the symptoms and the medications down with
+      // it. No metrics on is a safe default, and it is the state a new record is
+      // in.
+      return none;
     }
   }
 }

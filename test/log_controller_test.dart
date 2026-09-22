@@ -18,6 +18,7 @@ import 'package:cystera/core/log/log_repository.dart';
 import 'package:cystera/core/log/severity.dart';
 import 'package:cystera/core/meds/dose_history.dart';
 import 'package:cystera/core/meds/med_models.dart';
+import 'package:cystera/core/metrics/metric_models.dart';
 import 'package:cystera/core/platform/reminder_scheduler.dart';
 import 'package:cystera/core/reminders/reminder_plan.dart';
 import 'package:cystera/core/reminders/reminder_settings.dart';
@@ -1766,6 +1767,31 @@ void main() {
       expect(report!.csv, isNot(contains('lab,')));
     });
   });
+
+  group('one unreadable settings row', () {
+    test('costs that setting, not the day the record holds', () async {
+      // The rule the load path states for itself: a settings row that cannot be
+      // read is a reason to fall back to the defaults, not a reason to blank the
+      // symptoms on the screen. The metric switches were the one read that did not
+      // follow it — it sat inside the record's own catch, so a single unreadable
+      // row took the day's log with it and showed an error sentence instead.
+      await build();
+      await repository.setNote(day(0), 'cramps, a hot water bottle');
+      await log.refresh();
+      expect(log.error, isNull);
+      expect(log.todayLog.note, 'cramps, a hot water bottle');
+
+      repository = _UnreadableMetricPrefs();
+      await repository.setNote(day(0), 'cramps, a hot water bottle');
+      await log.refresh();
+
+      expect(log.error, isNull,
+          reason: 'a settings row is not the record, and must not read as one');
+      expect(log.todayLog.note, 'cramps, a hot water bottle');
+      expect(log.metricPrefs.enabled, isEmpty,
+          reason: 'the switches fall back to none, the state a new record is in');
+    });
+  });
 }
 
 /// A repository whose reads fail, standing in for a store that closed or a file
@@ -1774,5 +1800,14 @@ class _FailingRepository extends FakeLogRepository {
   @override
   Future<Map<String, DayLog>> loadRange(DateTime from, DateTime to) async {
     throw StateError('database is closed');
+  }
+}
+
+/// A repository whose metric switches cannot be read: one settings row this build
+/// cannot make sense of, with everything else in the record perfectly fine.
+class _UnreadableMetricPrefs extends FakeLogRepository {
+  @override
+  Future<MetricPrefs> metricPrefs() async {
+    throw StateError('that settings row is unreadable');
   }
 }
