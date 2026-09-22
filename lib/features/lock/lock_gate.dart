@@ -62,7 +62,18 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
     // does not include a Navigator". Giving the lock screens their own Navigator
     // fixes that, and keeps them unable to reach any app route: the routes are
     // in a different Navigator entirely.
-    return screen == null ? widget.child : _ModalNavigator(child: screen);
+    //
+    // The key below is load-bearing, not decoration. A Navigator hands its page
+    // to a route once and the route's scope caches it, and `onGenerateRoute` is
+    // not re-run for a route that already exists — so a Navigator that keeps its
+    // identity across a phase change keeps painting the screen it was born with.
+    // Keying it by the phase makes each transition build a fresh Navigator, and
+    // therefore a fresh page: without it the app's very first frame (`starting`)
+    // is the only screen a launch ever shows, which is a boot splash that never
+    // ends on every phone, both when there is no record and when there is one.
+    return screen == null
+        ? widget.child
+        : _ModalNavigator(key: ValueKey(phase), child: screen);
   }
 }
 
@@ -76,7 +87,7 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
 /// screen is on the first frame whatever the GPU does — the same screen the user
 /// sees on hardware where the animation would have run.
 class _ModalNavigator extends StatelessWidget {
-  const _ModalNavigator({required this.child});
+  const _ModalNavigator({super.key, required this.child});
 
   final Widget child;
 

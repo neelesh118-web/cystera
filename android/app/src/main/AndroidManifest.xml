@@ -95,11 +95,29 @@
             android:enabled="true" />
 
         <!--
-          MediaTek MT6768 Mali-G57 rejects Vulkan format requests (R8,
-          RGBA_10101010) that both Impeller Vulkan and Skia Vulkan need,
-          causing the renderer to produce one frame and then go silent.
-          This key is only respected in debug/profile; release ignores it
-          and falls back to Vulkan regardless. See issue below.
+          Which renderer this app asks the engine for, kept together with the
+          correction that stops it being "fixed" again from the same wrong guess.
+
+          It began as a workaround for a launch that looked like a hang: on a
+          Motorola moto g06 power (MediaTek MT6768 / Mali-G57) the release build
+          painted one frame and then went silent, and the frame it painted was the
+          boot splash, so the phone appeared frozen on it forever.
+
+          The renderer was not the cause. The freeze was the lock gate painting a
+          page it could never replace, and it reproduces on a host test in under a
+          second — see `test/lock_gate_test.dart`. The measurement that rules the
+          renderer out: with Impeller switched off through a flag the release
+          build does honour (`io.flutter.embedding.android.EnableImpeller` =
+          false), the release build still froze on the same splash, because the
+          gate was the bug all along.
+
+          So the key below stays for what it is genuinely good for. Debug and
+          profile builds get the GLES backend on GPUs like this one, where the
+          Vulkan driver has known problems. The release build ignores it and uses
+          Impeller Vulkan regardless — verified in logcat, which prints "Using the
+          Impeller rendering backend (Vulkan)" for a release build — so it cannot
+          be leaned on for a release fix, and a Vulkan stall seen in release is
+          not evidence that this line is broken.
         -->
         <meta-data
             android:name="io.flutter.embedding.android.ImpellerBackend"

@@ -226,4 +226,35 @@ void main() {
       expect((await vault.readAttempts()).failures, 3);
     });
   });
+
+  group('a stored blob of the wrong shape', () {
+    test('prefs fall back to the defaults rather than failing the boot',
+        () async {
+      final store = MemorySecureStore();
+      final vault = vaultOn(store);
+
+      // Valid JSON, wrong shape. The first is an array where an object is
+      // expected, the second an object whose field is the wrong type; both throw
+      // a TypeError, which is an `Error` and not an `Exception`, so the guard for
+      // malformed JSON above does not see it. Left unguarded, this is enough to
+      // strand the app's start-up on its splash.
+      await store.write(VaultKeys.prefs, '[]');
+      expect((await vault.readPrefs()).lockEnabled, isFalse);
+
+      await store.write(VaultKeys.prefs, '{"lockEnabled": "yes"}');
+      expect((await vault.readPrefs()).lockEnabled, isFalse);
+    });
+
+    test('a count of wrong PINs of the wrong shape does not fail the boot',
+        () async {
+      final store = MemorySecureStore();
+      final vault = vaultOn(store);
+
+      await store.write(VaultKeys.attempts, '[]');
+      expect((await vault.readAttempts()).failures, 0);
+
+      await store.write(VaultKeys.attempts, '{"failures": "many"}');
+      expect((await vault.readAttempts()).failures, 0);
+    });
+  });
 }

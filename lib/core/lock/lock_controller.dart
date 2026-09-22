@@ -172,7 +172,18 @@ class LockController extends ChangeNotifier {
       } else {
         _phase = LockPhase.locked;
       }
-    } on Exception catch (error) {
+    } on Object catch (error, stack) {
+      // `Object`, not `Exception`, and the difference is the reason this method
+      // can be trusted to end in a named phase. A Dart `Error` is not an
+      // `Exception`: a TypeError from a stored payload of the wrong shape, or a
+      // StateError from a plugin, escaped the `on Exception` guard this used to
+      // have, so the future completed with an error, nothing notified the gate,
+      // and the phase stayed `starting`. On screen that is a branded logo that
+      // never changes — indistinguishable from the app still loading, and on
+      // this phone it was mistaken for a renderer fault twice before the gate
+      // itself turned out to be at fault. Whatever goes wrong, an unreadable
+      // record is a screen that says so, never a logo.
+      debugPrint('Cystera could not read the record at startup: $error\n$stack');
       _phase = LockPhase.corrupt;
       _message = 'The record could not be read: $error';
     }

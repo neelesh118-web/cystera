@@ -192,6 +192,13 @@ class Vault {
       // A prefs blob we cannot read must not take the app down; the defaults
       // are safe ones (lock off, discreet icon off).
       return const LockPrefs();
+    } on TypeError {
+      // The same promise for the other way a blob can be unreadable: valid JSON
+      // of the wrong shape (an array, or a field of the wrong type — an older
+      // format, or something hand-edited). That throws a TypeError, which is an
+      // `Error` and not an `Exception`, so the guard above does not see it, and
+      // an unguarded throw here is enough to strand the app's start-up.
+      return const LockPrefs();
     }
   }
 
@@ -204,6 +211,10 @@ class Vault {
     try {
       return AttemptPolicy.decode(raw);
     } on FormatException {
+      return const AttemptPolicy();
+    } on TypeError {
+      // See readPrefs: wrong-shape JSON throws an Error rather than an
+      // Exception. A count of wrong PINs is not worth failing a boot over.
       return const AttemptPolicy();
     }
   }

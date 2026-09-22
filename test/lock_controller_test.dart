@@ -596,4 +596,52 @@ void main() {
       expect(fresh.message, isNotNull);
     });
   });
+
+  group('a boot that cannot finish', () {
+    test('a store that fails with an Error still names a phase', () async {
+      // An `Error` is not an `Exception`. This used to escape the boot's guard,
+      // and the phase stayed `starting` — the app sat on its splash with nothing
+      // on screen to say why, which reads to a person as "still loading" forever.
+      // Whatever goes wrong, `initialise()` has to end in a phase the UI can act
+      // on: an unreadable record is a screen that says so, never a logo.
+      final controller = LockController(
+        vault: Vault(
+          FailingStore(StateError('keystore unavailable')),
+          pinIterations: 1200,
+        ),
+        privacy: FakeDevicePrivacy(),
+        recordStore: FakeRecordStoreFactory()..sizeOnDisk = 4096,
+        biometrics: FakeBiometricGate(),
+        clock: TestClock().call,
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialise();
+
+      expect(controller.phase, isNot(LockPhase.starting));
+      expect(controller.phase, LockPhase.corrupt);
+      expect(controller.message, contains('keystore unavailable'));
+    });
+  });
 }
+
+/// A secure store whose every call fails the way a platform plugin can: with an
+/// `Error` rather than an `Exception`.
+class FailingStore implements SecureStore {
+  FailingStore(this.error);
+
+  final Object error;
+
+  @override
+  Future<String?> read(String key) async => throw error;
+
+  @override
+  Future<void> write(String key, String? value) async => throw error;
+
+  @override
+  Future<void> delete(String key) async => throw error;
+
+  @override
+  Future<void> wipe() async => throw error;
+}
+
