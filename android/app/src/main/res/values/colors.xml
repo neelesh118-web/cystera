@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Slate, not rose: the discreet icon must not read as a health app. -->
+    <color name="ic_discreet_background">#2B3038</color>
+</resources>

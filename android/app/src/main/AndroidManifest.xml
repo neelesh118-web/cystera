@@ -1,0 +1,126 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      No INTERNET permission, and it must stay that way: tool/no_internet_check.dart
+      fails the build if one ever appears here or in the merged release manifest.
+
+      One permission, and only on API 33+: POST_NOTIFICATIONS, requested the first
+      time a reminder is switched on rather than at launch. Before 33 it is not
+      requested and not needed.
+
+      Deliberately absent, and the guard-adjacent reason is worth stating:
+      SCHEDULE_EXACT_ALARM and USE_EXACT_ALARM. Play grants those to alarm clocks
+      and calendars, and asking for one to nudge someone about their cycle would be
+      the app asking for a capability it does not need — the reminders are
+      inexact, may arrive late, and the settings screen says so. Also absent:
+      RECEIVE_BOOT_COMPLETED, because nothing about this app's reminders is
+      written to disk and so there is nothing to restore after a restart.
+    -->
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:label="@string/app_name"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules">
+
+        <!--
+          Not a launcher activity any more: the two aliases below carry the
+          LAUNCHER intent-filter, and exactly one of them is enabled at a time.
+          This is how the app can appear as "Cystera" or as "Records" without
+          being two apps.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+        </activity>
+
+        <!-- The normal entry, shown by default. -->
+        <activity-alias
+            android:name="com.onekit.cystera.LauncherDefault"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:enabled="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <!--
+          The discreet entry. Disabled in the manifest; the app enables it and
+          disables the one above when the user asks for it.
+        -->
+        <activity-alias
+            android:name="com.onekit.cystera.LauncherDiscreet"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:enabled="false"
+            android:icon="@mipmap/ic_launcher_discreet"
+            android:label="@string/app_name_discreet">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity-alias>
+
+        <!--
+          Posts a reminder when its alarm fires. Not exported, so only this app's
+          own `PendingIntent`s can trigger it, and it holds no state: everything
+          it posts is handed to it by the alarm, and everything it is handed is
+          the same text for every user of the app.
+        -->
+        <receiver
+            android:name=".ReminderReceiver"
+            android:exported="false"
+            android:enabled="true" />
+
+        <!--
+          MediaTek MT6768 Mali-G57 rejects Vulkan format requests (R8,
+          RGBA_10101010) that both Impeller Vulkan and Skia Vulkan need,
+          causing the renderer to produce one frame and then go silent.
+          This key is only respected in debug/profile; release ignores it
+          and falls back to Vulkan regardless. See issue below.
+        -->
+        <meta-data
+            android:name="io.flutter.embedding.android.ImpellerBackend"
+            android:value="opengles" />
+
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>
