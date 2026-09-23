@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cystera — Privacy Policy</title>
+<style>
+  :root { --fg:#1a1a1a; --muted:#555; --accent:#c84b6a; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+         color: var(--fg); margin: 0; padding: 0; line-height: 1.6; }
+  header { background: #fff; border-bottom: 1px solid #eee; padding: 2rem 1rem; text-align: center; }
+  header h1 { margin: 0; font-size: 1.6rem; color: var(--accent); }
+  header p { margin: .35rem 0 0; color: var(--muted); font-size: .9rem; }
+  main { max-width: 760px; margin: 0 auto; padding: 2rem 1.25rem; }
+  section { margin-bottom: 2rem; }
+  h2 { font-size: 1.15rem; border-bottom: 2px solid #f0e6e8; padding-bottom: .3rem; }
+  p, li { font-size: .95rem; }
+  ul { padding-left: 1.25rem; }
+  .note { background: #fdf3f6; border-left: 4px solid var(--accent); padding: .8rem 1rem;
+          border-radius: 6px; font-size: .88rem; color: var(--muted); }
+  footer { text-align: center; padding: 1.5rem 1rem; color: var(--muted); font-size: .82rem;
+           border-top: 1px solid #eee; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Cystera</h1>
+  <p>PCOS, PCOD &amp; PMOS record · Privacy Policy</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>Summary</h2>
+    <p>Cystera is an offline health record. It does not have an account, does not show
+    ads, and the release build does not request any network permission. Everything the app
+    writes stays on your phone, encrypted.</p>
+  </section>
+
+  <section>
+    <h2>Data we collect</h2>
+    <p><strong>None.</strong> Cystera does not collect, transmit, or share personal data. There
+    is no analytics, no crash reporting, no advertising, and no account. The data you enter —
+    cycles, symptoms, medications, measurements, lab values, reminders and notes — is stored
+    locally on your device only.</p>
+  </section>
+
+  <section>
+    <h2>Where your data is stored</h2>
+    <p>Your record is encrypted with SQLCipher under a random 32-byte key. That key is wrapped
+    by a key derived from your PIN together with a 32-byte device secret that never leaves the
+    phone's secure hardware (the keystore / TEE). A backup file you export is sealed with a
+    passphrase you choose, at a deliberately higher derivation cost.</p>
+    <p>The language preference is stored separately so the lock screen can display words before
+    the encrypted record is unlocked.</p>
+  </section>
+
+  <section>
+    <h2>Permissions</h2>
+    <p>The release build requests only the permissions needed to function: storage (for the
+    encrypted database and exported files), biometric / device credential (for the lock gate),
+    and notifications (for the reminders you arm). It does not request <code>INTERNET</code>
+    or <code>ACCESS_NETWORK_STATE</code>. A build-time guard fails the build if anything would
+    let a release artifact reach a network.</p>
+  </section>
+
+  <section>
+    <h2>Backups</h2>
+    <p>A backup is a file you choose to export and share. It is encrypted end-to-end and can only
+    be restored by this app on a device that can unlock it. The doctor report (PDF / CSV) is the
+    one part of Cystera built to leave the phone and is therefore not encrypted, because a
+    clinician must be able to open it. The share sheet states this when you export it.</p>
+  </section>
+
+  <section>
+    <h2>Third-party code</h2>
+    <p>Cystera uses the Flutter framework, the Android platform, SQLCipher via
+    <code>sqflite_sqlcipher</code>, and the Android keystore. No third party receives any data
+    from the app, because the app sends none.</p>
+  </section>
+
+  <section>
+    <h2>Changes to this policy</h2>
+    <p>This policy may be updated from time to time. The current version is the one published at
+    this URL. Material changes will be described in the app's settings and release notes.</p>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <p>Questions about this policy can be addressed through the repository's issue tracker.</p>
+  </section>
+
+  <div class="note">
+    This privacy policy is machine-generated text, not legal advice. Review it against the
+    obligations that apply to your app and jurisdiction before publishing.
+  </div>
+
+</main>
+
+<footer>
+  Cystera · Package <code>com.onekit.cystera</code> · Last updated 23 September 2026
+</footer>
+</body>
+</html>
